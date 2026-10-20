@@ -1,0 +1,21 @@
+<div class="max-w-3xl mx-auto mt-10 p-6 bg-white shadow rounded-lg">
+  <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @template.title %></h1>
+  <p class="text-gray-600 mb-6"><%= @template.description %></p>
+
+  <h2 class="text-xl font-semibold mb-4">Питання в лабораторній роботі:</h2>
+  <div class="space-y-3">
+    <% @template.questions.each_with_index do |question, index| %>
+      <div class="p-4 bg-gray-50 rounded border">
+        <p class="font-medium text-gray-800"><%= index + 1 %>. <%= question.content %></p>
+        <div class="mt-2 text-xs text-gray-500 flex space-x-4">
+          <span>Тип: <strong class="uppercase"><%= question.question_type %></strong></span>
+          <span><%= question.required? ? "Обов'язкове" : "Необов'язкове" %></span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6 flex space-x-4">
+    <%= link_to "Назад до списку", teacher_lab_work_templates_path, class: "px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" %>
+  </div>
+</div>

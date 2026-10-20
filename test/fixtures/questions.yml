@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  lab_work_template: one
+  content: MyText
+  question_type: MyString
+  required: false
+
+two:
+  lab_work_template: two
+  content: MyText
+  question_type: MyString
+  required: false

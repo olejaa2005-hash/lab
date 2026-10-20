@@ -1,0 +1,47 @@
+<div style="max-width: 800px; margin: 40px auto; padding: 20px; font-family: sans-serif;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>Кабінет студента: Лабораторні роботи</h1>
+    <%= button_to "Вийти", logout_path, method: :delete, style: "padding: 8px 16px; background: red; color: white; border: none; cursor: pointer;" %>
+  </div>
+
+  <div style="margin-bottom: 30px;">
+    <h2>Доступні шаблони лабораторних</h2>
+    <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+      <% @templates.each do |template| %>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
+          <div>
+            <h3 style="margin: 0; color: blue;"><%= template.title %></h3>
+            <p style="margin: 5px 0 0 0; color: #666;"><%= template.description %></p>
+          </div>
+          <div>
+            <%= form_with url: student_lab_works_path, method: :post, data: { turbo: false } do |f| %>
+              <%= hidden_field_tag :lab_work_template_id, template.id %>
+              <%= f.submit "Розпочати", style: "padding: 8px 16px; background: green; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+      <% if @templates.empty? %>
+        <p style="text-align: center; color: #666;">Викладачі ще не додали жодного шаблону.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <h2>Мої лабораторні роботи</h2>
+    <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+      <% @my_lab_works.each do |work| %>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
+          <div>
+            <h3 style="margin: 0;"><%= work.lab_work_template.title %></h3>
+            <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">Статус: <b><%= work.status %></b></p>
+          </div>
+          <%= link_to "Продовжити", student_lab_work_path(work), style: "padding: 8px 16px; background: blue; color: white; text-decoration: none; border-radius: 3px;" %>
+        </div>
+      <% end %>
+      <% if @my_lab_works.empty? %>
+        <p style="text-align: center; color: #666;">Ви ще не розпочали жодної роботи.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

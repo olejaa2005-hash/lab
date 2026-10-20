@@ -1,0 +1,28 @@
+<div style="max-width: 800px; margin: 40px auto; padding: 20px; font-family: sans-serif;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>Кабінет викладача: Здані лабораторні</h1>
+    <div>
+      <%= link_to "Шаблони", teacher_lab_work_templates_path, style: "margin-right: 15px; color: blue; text-decoration: none;" %>
+      <%= button_to "Вийти", logout_path, method: :delete, style: "display: inline; padding: 8px 16px; background: red; color: white; border: none; cursor: pointer;" %>
+    </div>
+  </div>
+
+  <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+    <% @lab_works.each do |work| %>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
+        <div>
+          <h3 style="margin: 0; color: blue;"><%= work.lab_work_template.title %></h3>
+          <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">
+            Студент: <b><%= work.student.email_address %></b> | Статус: <span style="color: green; font-weight: bold;"><%= work.status %></span>
+          </p>
+        </div>
+        <div>
+          <%= link_to "Перевірити", teacher_lab_work_path(work), style: "padding: 8px 16px; background: blue; color: white; text-decoration: none; border-radius: 4px;" %>
+        </div>
+      </div>
+    <% end %>
+    <% if @lab_works.empty? %>
+      <p style="text-align: center; color: #666;">Ще немає зданих робіт від студентів.</p>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div style="max-width: 800px; margin: 40px auto; padding: 20px; font-family: sans-serif;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="margin: 0;"><%= @template.title %></h1>
+    <%= link_to "Назад до списку", student_lab_works_path, style: "color: blue; text-decoration: none;" %>
+  </div>
+
+  <p style="color: #666; margin-bottom: 20px;"><%= @template.description %></p>
+
+  <h2 style="font-size: 18px; margin-bottom: 15px;">Запитання:</h2>
+
+  <%= form_with model: [:student, @lab_work], method: :patch, data: { turbo: false } do |f| %>
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <% @template.questions.each_with_index do |question, index| %>
+        <div style="padding: 15px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9;">
+          <label style="display: block; font-weight: bold; margin-bottom: 8px;">
+            <%= index + 1 %>. <%= question.content %>
+            <% if question.required? %>
+              <span style="color: red;">*</span>
+            <% end %>
+          </label>
+          <textarea name="answers[<%= question.id %>]" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Введіть вашу відповідь тут..."></textarea>
+        </div>
+      <% end %>
+    </div>
+
+    <div style="margin-top: 30px; text-align: right;">
+      <%= f.submit "Здати роботу", style: "padding: 10px 20px; background: green; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;" %>
+    </div>
+  <% end %>
+</div>
