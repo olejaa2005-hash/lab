@@ -25,8 +25,12 @@ module Student
 
     def update
       @lab_work = current_user.lab_works.find(params[:id])
-      @template = @lab_work.lab_work_template
 
+      if @lab_work.status == "completed" || @lab_work.status == "reviewed"
+        redirect_to student_lab_work_path(@lab_work), alert: "Цю роботу вже здано, редагування неможливе." and return
+      end
+
+      @template = @lab_work.lab_work_template
       answers_params = params[:answers] || {}
 
       missing_required = @template.questions.any? do |question|
@@ -38,7 +42,6 @@ module Student
         render :show, status: :unprocessable_entity and return
       end
 
-      # Зберігаємо відповіді та змінюємо статус
       if @lab_work.update(status: "completed", answers: answers_params)
         redirect_to student_lab_works_path, notice: "Лабораторну роботу успішно здано!"
       else

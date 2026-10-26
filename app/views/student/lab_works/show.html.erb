@@ -17,7 +17,14 @@
     </div>
   <% end %>
 
-  <!-- Виведення повідомлення про помилку, якщо не заповнені обов'язкові поля -->
+  <!-- Повідомлення, якщо робота вже здана -->
+  <% if @lab_work.status == "completed" || @lab_work.status == "reviewed" %>
+    <div style="background: #e8f0fe; border: 1px solid #1a73e8; padding: 15px; border-radius: 5px; margin-bottom: 20px; color: #174ea6; font-weight: bold;">
+      Цю роботу вже здано. Внесення змін більше неможливе. Статус: <%= @lab_work.status %>
+    </div>
+  <% end %>
+
+  <!-- Виведення повідомлення про помилку -->
   <% if flash[:alert].present? %>
     <div style="padding: 12px; margin-bottom: 20px; background: #ffe6e6; color: #cc0000; border: 1px solid #cc0000; border-radius: 4px; font-weight: bold;">
       <%= flash[:alert] %>
@@ -27,6 +34,8 @@
   <p style="color: #666; margin-bottom: 20px;"><%= @template.description %></p>
 
   <h2 style="font-size: 18px; margin-bottom: 15px;">Запитання:</h2>
+
+  <% is_submitted = (@lab_work.status == "completed" || @lab_work.status == "reviewed") %>
 
   <%= form_with model: [:student, @lab_work], method: :patch, data: { turbo: false } do |f| %>
     <div style="display: flex; flex-direction: column; gap: 20px;">
@@ -39,17 +48,20 @@
             <% end %>
           </label>
 
-          <%# Пріоритет: 1) збережена відповідь з бази даних, 2) введений текст при помилці валідації %>
           <% saved_answer = @lab_work.answers&.dig(question.id.to_s) %>
           <% current_answer = params.dig(:answers, question.id.to_s).presence || saved_answer %>
 
-          <textarea name="answers[<%= question.id %>]" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Введіть вашу відповідь тут..."><%= current_answer %></textarea>
+
+          <textarea name="answers[<%= question.id %>]" rows="3" <%= "disabled" if is_submitted %> style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: <%= is_submitted ? '#eee' : '#fff' %>;" placeholder="Введіть вашу відповідь тут..."><%= current_answer %></textarea>
         </div>
       <% end %>
     </div>
 
-    <div style="margin-top: 30px; text-align: right;">
-      <%= f.submit "Здати роботу", style: "padding: 10px 20px; background: green; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;" %>
-    </div>
+    <!-- Кнопка здачі відображається лише якщо робота ще не здана -->
+    <% unless is_submitted %>
+      <div style="margin-top: 30px; text-align: right;">
+        <%= f.submit "Здати роботу", style: "padding: 10px 20px; background: green; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;" %>
+      </div>
+    <% end %>
   <% end %>
 </div>
