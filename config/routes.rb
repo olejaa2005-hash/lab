@@ -1,14 +1,12 @@
 Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
-  root "sessions#new"
 
-  get "/login", to: "sessions#new"
-  post "/login", to: "sessions#create"
-  delete "/logout", to: "sessions#destroy"
+
+  root "sessions#welcome"
 
   namespace :teacher do
-    resources :lab_work_templates, only: [:index, :new, :create, :show]
+    resources :lab_work_templates
     resources :lab_works, only: [:index, :show, :update]
   end
 

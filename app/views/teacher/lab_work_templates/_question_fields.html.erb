@@ -1,0 +1,10 @@
+<div class="nested-fields border p-4 rounded mb-4 bg-gray-50 flex items-center justify-between" data-new-record="<%= f.object.new_record? %>">
+  <div class="flex-1 mr-4">
+    <%= f.label :content, "Текст запитання", class: "block text-sm font-medium" %>
+    <%= f.text_field :content, class: "w-full border rounded p-2 mt-1" %>
+    <%= f.hidden_field :_destroy %>
+  </div>
+  <div>
+    <button type="button" data-action="nested-form#remove" class="text-red-600 hover:underline font-medium">Видалити</button>
+  </div>
+</div>

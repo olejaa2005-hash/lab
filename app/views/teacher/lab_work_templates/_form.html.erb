@@ -1,0 +1,86 @@
+<%= form_with model: [:teacher, @template], local: true, class: "space-y-6", data: { turbo: false } do |form| %>
+  <div>
+    <%= form.label :title, "Назва лабораторної роботи", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_field :title, required: true, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" %>
+  </div>
+
+  <div>
+    <%= form.label :description, "Опис та інструкції", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_area :description, rows: 4, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" %>
+  </div>
+
+  <hr class="my-6">
+
+  <h2 class="text-xl font-semibold text-gray-800">Питання до лабораторної</h2>
+
+
+  <div id="questions-container">
+    <%= form.fields_for :questions do |q_form| %>
+      <div class="question-item p-4 bg-gray-50 rounded-md border border-gray-200 space-y-3 mb-4">
+        <div>
+          <%= q_form.label :content, "Текст питання", class: "block text-sm font-medium text-gray-700" %>
+          <%= q_form.text_area :content, rows: 2, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" %>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <%= q_form.label :question_type, "Тип питання", class: "block text-sm font-medium text-gray-700" %>
+            <%= q_form.select :question_type, [["Текст", "text"], ["Зображення", "image"], ["Код", "code"]], {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" %>
+          </div>
+
+          <div class="flex items-center mt-6">
+            <%= q_form.check_box :required, class: "h-4 w-4 text-blue-600 border-gray-300 rounded" %>
+            <%= q_form.label :required, "Обов'язкове питання", class: "ml-2 block text-sm text-gray-900" %>
+          </div>
+        </div>
+
+        <button type="button" onclick="this.closest('.question-item').remove()" class="text-red-600 text-sm font-medium hover:underline mt-2">
+          ❌ Видалити це питання
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <div>
+    <button type="button" id="add-question-btn" class="px-4 py-2 bg-green-100 text-green-800 rounded-md hover:bg-green-200 font-medium cursor-pointer">
+      + Додати ще одне питання
+    </button>
+  </div>
+
+  <div class="flex justify-end space-x-4 pt-4 border-t">
+    <%= link_to "Скасувати", teacher_lab_work_templates_path, class: "px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" %>
+    <%= form.submit "Зберегти шаблон", class: "px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer" %>
+  </div>
+<% end %>
+
+
+<script>
+    document.getElementById('add-question-btn').addEventListener('click', function() {
+        const container = document.getElementById('questions-container');
+        const items = container.getElementsByClassName('question-item');
+
+        if (items.length > 0) {
+            const newIndex = items.length;
+
+            const clone = items[0].cloneNode(true);
+
+            clone.querySelectorAll('textarea').forEach(el => el.value = '');
+            clone.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+            clone.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+
+            clone.querySelectorAll('input, textarea, select, label').forEach(el => {
+                if (el.name) {
+                    el.name = el.name.replace(/\[questions_attributes\]\[\d+\]/, `[questions_attributes][${newIndex}]`);
+                }
+                if (el.id) {
+                    el.id = el.id.replace(/_questions_\d+_/, `_questions_${newIndex}_`);
+                }
+                if (el.htmlFor) {
+                    el.htmlFor = el.htmlFor.replace(/_questions_\d+_/, `_questions_${newIndex}_`);
+                }
+            });
+
+            container.appendChild(clone);
+        }
+    });
+</script>

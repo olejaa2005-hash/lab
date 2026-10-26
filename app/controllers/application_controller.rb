@@ -5,7 +5,8 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+    # Чітко беремо користувача через зв'язок сесії з юзером у Rails 8
+    @current_user ||= Current.session&.user
   end
 
   def logged_in?
@@ -22,7 +23,7 @@ class ApplicationController < ActionController::Base
 
   def require_login
     unless logged_in?
-      redirect_to login_path, alert: "Будь ласка, увійдіть у систему."
+      redirect_to new_session_path, alert: "Будь ласка, увійдіть у систему."
     end
   end
 end
