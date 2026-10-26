@@ -1,8 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   has_many :lab_work_templates, foreign_key: "teacher_id", dependent: :destroy
-  has_many :created_templates, class_name: "LabWorkTemplate", foreign_key: "teacher_id", dependent: :destroy
-
+  has_many :answers, dependent: :destroy
 
 
   has_many :lab_works, foreign_key: "student_id", dependent: :destroy
