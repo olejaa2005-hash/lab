@@ -14,12 +14,17 @@ module Student
 
     def create
       template = LabWorkTemplate.find(params[:lab_work_template_id])
-      @lab_work = current_user.lab_works.build(lab_work_template: template, status: "in_progress")
+      @lab_work = current_user.lab_works.find_or_initialize_by(lab_work_template: template)
 
-      if @lab_work.save
-        redirect_to student_lab_works_path, notice: "Роботу розпочато!"
+      if @lab_work.persisted?
+        redirect_to student_lab_works_path, alert: "Ви вже виконуєте або виконали цю лабораторну роботу."
       else
-        redirect_to student_lab_works_path, alert: "Помилка при створенні."
+        @lab_work.status = "in_progress"
+        if @lab_work.save
+          redirect_to student_lab_works_path, status: :see_other, notice: "Роботу розпочато!"
+        else
+          redirect_to student_lab_works_path, alert: "Помилка при створенні."
+        end
       end
     end
 
@@ -42,7 +47,7 @@ module Student
         render :show, status: :unprocessable_entity and return
       end
 
-      if @lab_work.update(status: "completed", answers: answers_params)
+      if @lab_work.update(lab_work_params.to_h.merge(status: "completed", answers: answers_params))
         redirect_to student_lab_works_path, notice: "Лабораторну роботу успішно здано!"
       else
         render :show, status: :unprocessable_entity
@@ -55,6 +60,10 @@ module Student
       unless student?
         redirect_to root_path, alert: "Доступ заборонено."
       end
+    end
+
+    def lab_work_params
+      params.fetch(:lab_work, {}).permit(files: [])
     end
   end
 end

@@ -8,7 +8,7 @@
 
   <h2 style="font-size: 18px; margin-bottom: 15px;">Запитання та відповіді студента:</h2>
 
-  <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
+  <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
     <% @template.questions.each_with_index do |question, index| %>
       <div style="padding: 15px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9;">
         <p style="font-weight: bold; margin: 0 0 5px 0;"><%= index + 1 %>. <%= question.content %></p>
@@ -21,7 +21,21 @@
     <% end %>
   </div>
 
+  <!-- Блок виведення прикріплених файлів студента -->
+  <% if @lab_work.files.attached? %>
+    <div style="margin-bottom: 25px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; background: #fff;">
+      <h3 style="margin: 0 0 10px 0; font-size: 16px;">Прикріплені файли студента:</h3>
+      <ul style="margin: 0; padding-left: 20px;">
+        <% @lab_work.files.each do |file| %>
+          <li><%= link_to file.filename, rails_blob_path(file, disposition: "attachment"), target: "_blank", style: "color: blue; font-weight: bold;" %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% else %>
+    <p style="color: #666; margin-bottom: 25px;">Студент не прикріпив жодних файлів до цієї роботи.</p>
+  <% end %>
 
+  <!-- Форма виставлення оцінки та коментаря -->
   <%= form_with model: [:teacher, @lab_work], method: :patch, style: "background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px;" do |f| %>
     <h3 style="margin-top: 0; font-size: 18px;">Оцінка та відгук викладача</h3>
 

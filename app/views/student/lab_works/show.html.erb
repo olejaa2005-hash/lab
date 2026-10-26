@@ -4,7 +4,7 @@
     <%= link_to "Назад до списку", student_lab_works_path, style: "color: blue; text-decoration: none;" %>
   </div>
 
-  <!-- Блок виведення оцінки та коментаря від викладача, якщо робота перевірена -->
+  <!-- Блок виведення результатів перевірки -->
   <% if @lab_work.grade.present? || @lab_work.feedback.present? %>
     <div style="background: #e6f4ea; border: 1px solid #34a853; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
       <h3 style="margin: 0 0 10px 0; color: #137333;">Результати перевірки:</h3>
@@ -17,14 +17,14 @@
     </div>
   <% end %>
 
-  <!-- Повідомлення, якщо робота вже здана -->
-  <% if @lab_work.status == "completed" || @lab_work.status == "reviewed" %>
+  <% is_submitted = (@lab_work.status == "completed" || @lab_work.status == "reviewed") %>
+
+  <% if is_submitted %>
     <div style="background: #e8f0fe; border: 1px solid #1a73e8; padding: 15px; border-radius: 5px; margin-bottom: 20px; color: #174ea6; font-weight: bold;">
       Цю роботу вже здано. Внесення змін більше неможливе. Статус: <%= @lab_work.status %>
     </div>
   <% end %>
 
-  <!-- Виведення повідомлення про помилку -->
   <% if flash[:alert].present? %>
     <div style="padding: 12px; margin-bottom: 20px; background: #ffe6e6; color: #cc0000; border: 1px solid #cc0000; border-radius: 4px; font-weight: bold;">
       <%= flash[:alert] %>
@@ -33,12 +33,9 @@
 
   <p style="color: #666; margin-bottom: 20px;"><%= @template.description %></p>
 
-  <h2 style="font-size: 18px; margin-bottom: 15px;">Запитання:</h2>
-
-  <% is_submitted = (@lab_work.status == "completed" || @lab_work.status == "reviewed") %>
-
   <%= form_with model: [:student, @lab_work], method: :patch, data: { turbo: false } do |f| %>
-    <div style="display: flex; flex-direction: column; gap: 20px;">
+    <h2 style="font-size: 18px; margin-bottom: 15px;">Запитання:</h2>
+    <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px;">
       <% @template.questions.each_with_index do |question, index| %>
         <div style="padding: 15px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9;">
           <label style="display: block; font-weight: bold; margin-bottom: 8px;">
@@ -51,15 +48,30 @@
           <% saved_answer = @lab_work.answers&.dig(question.id.to_s) %>
           <% current_answer = params.dig(:answers, question.id.to_s).presence || saved_answer %>
 
-
           <textarea name="answers[<%= question.id %>]" rows="3" <%= "disabled" if is_submitted %> style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: <%= is_submitted ? '#eee' : '#fff' %>;" placeholder="Введіть вашу відповідь тут..."><%= current_answer %></textarea>
         </div>
       <% end %>
     </div>
 
-    <!-- Кнопка здачі відображається лише якщо робота ще не здана -->
+    <!-- Секція прикріплення файлів -->
+    <div style="padding: 15px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9; margin-bottom: 20px;">
+      <label style="display: block; font-weight: bold; margin-bottom: 8px;">Прикріпити файли до роботи:</label>
+      <%= f.file_field :files, multiple: true, disabled: is_submitted, style: "width: 100%;" %>
+
+      <% if @lab_work.files.attached? %>
+        <div style="margin-top: 15px;">
+          <p style="font-weight: bold; margin-bottom: 5px; font-size: 14px;">Вже прикріплені файли:</p>
+          <ul style="margin: 0; padding-left: 20px;">
+            <% @lab_work.files.each do |file| %>
+              <li><%= link_to file.filename, rails_blob_path(file, disposition: "attachment"), target: "_blank", style: "color: blue;" %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+
     <% unless is_submitted %>
-      <div style="margin-top: 30px; text-align: right;">
+      <div style="text-align: right;">
         <%= f.submit "Здати роботу", style: "padding: 10px 20px; background: green; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;" %>
       </div>
     <% end %>
