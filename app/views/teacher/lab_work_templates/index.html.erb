@@ -1,30 +1,30 @@
-<div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md border border-gray-200">
-  <div class="flex justify-between items-center border-b pb-4 mb-6">
-    <h1 class="text-3xl font-bold text-gray-800">Мої шаблони лабораторних</h1>
-    <div class="flex space-x-3">
-      <%= link_to "📋 Призначити роботу", new_teacher_lab_work_path, class: "px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition" %>
-      <%= link_to "+ Створити новий шаблон", new_teacher_lab_work_template_path, class: "px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition" %>
+<div style="max-width: 800px; margin: 40px auto; padding: 20px; font-family: sans-serif;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>Мої шаблони лабораторних</h1>
+    <div style="display: flex; gap: 10px;">
+      <!-- Ось ця кнопка відкриває список зданих робіт студентів для перевірки -->
+      <%= link_to "🔍 Перевірити здані роботи", teacher_lab_works_path, style: "padding: 8px 16px; background: #4f46e5; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;" %>
+      <%= link_to "+ Створити новий шаблон", new_teacher_lab_work_template_path, style: "padding: 8px 16px; background: #10b981; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;" %>
     </div>
   </div>
 
-  <% if @templates.any? %>
-    <ul class="space-y-4">
-      <% @templates.each do |template| %>
-        <li class="p-5 border border-gray-200 rounded-lg hover:shadow-sm transition">
-          <h3 class="text-xl font-semibold text-gray-800 mb-2"><%= template.title %></h3>
-          <p class="text-gray-600 mb-4 line-clamp-2"><%= template.description %></p>
-
-          <div class="flex items-center gap-4">
-            <%= link_to "Переглянути", teacher_lab_work_template_path(template), class: "text-blue-600 font-medium hover:underline" %>
-            <%= link_to "Редагувати", edit_teacher_lab_work_template_path(template), class: "text-yellow-600 font-medium hover:underline" %>
-
-            <%= link_to "Призначити студенту", new_teacher_lab_work_path(template_id: template.id), class: "text-green-600 font-medium hover:underline" %>
-            <%= button_to "Видалити", teacher_lab_work_template_path(template), method: :delete, class: "text-red-600 font-medium hover:underline bg-transparent border-none p-0 cursor-pointer" %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  <% else %>
-    <p class="text-gray-500 italic">У вас ще немає створених шаблонів.</p>
-  <% end %>
+  <div style="display: flex; flex-direction: column; gap: 15px;">
+    <% @lab_work_templates.each do |template| %>
+      <div style="padding: 15px; border: 1px solid #ccc; border-radius: 5px; background: #fff; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h3 style="margin: 0 0 5px 0; color: #1d4ed8;"><%= template.title %></h3>
+          <p style="margin: 0; color: #666; font-size: 14px;"><%= template.description %></p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <%= link_to "Переглянути", teacher_lab_work_template_path(template), style: "color: blue; text-decoration: none;" %>
+          <%= link_to "Редагувати", edit_teacher_lab_work_template_path(template), style: "color: orange; text-decoration: none;" %>
+          <%= link_to "Призначити студенту", new_teacher_lab_work_path(template_id: template.id), style: "color: green; text-decoration: none;" %>
+          <%= button_to "Видалити", teacher_lab_work_template_path(template), method: :delete, data: { confirm: "Впевнені?" }, style: "background: none; border: none; color: red; cursor: pointer; padding: 0;" %>
+        </div>
+      </div>
+    <% end %>
+    <% if @lab_work_templates.empty? %>
+      <p style="text-align: center; color: #666;">У вас ще немає створених шаблонів.</p>
+    <% end %>
+  </div>
 </div>

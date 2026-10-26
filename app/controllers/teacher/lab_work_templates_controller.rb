@@ -6,6 +6,7 @@ module Teacher
 
     def index
       @templates = current_user.lab_work_templates
+      @lab_work_templates = current_user.lab_work_templates
     end
 
     def show

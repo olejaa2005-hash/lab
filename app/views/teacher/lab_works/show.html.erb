@@ -6,18 +6,39 @@
 
   <p style="color: #666; margin-bottom: 20px;">Студент: <b><%= @lab_work.student.email_address %></b></p>
 
-  <h2 style="font-size: 18px; margin-bottom: 15px;">Запитання та відповіді:</h2>
+  <h2 style="font-size: 18px; margin-bottom: 15px;">Запитання та відповіді студента:</h2>
 
-  <div style="display: flex; flex-direction: column; gap: 15px;">
+  <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
     <% @template.questions.each_with_index do |question, index| %>
       <div style="padding: 15px; border: 1px solid #ccc; border-radius: 5px; background: #f9f9f9;">
         <p style="font-weight: bold; margin: 0 0 5px 0;"><%= index + 1 %>. <%= question.content %></p>
-        <p style="margin: 0; color: #444; background: #fff; padding: 10px; border: 1px dashed #ddd;">[Тут згодом виводитиметься відповідь студента]</p>
+
+        <div style="margin-top: 8px; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 4px; color: #333;">
+          <% student_answer = @lab_work.answers&.dig(question.id.to_s) %>
+          <%= student_answer.present? ? student_answer : content_tag(:em, "Студент не надав відповідь на це питання.", style: "color: #999;") %>
+        </div>
       </div>
     <% end %>
   </div>
 
-  <div style="margin-top: 30px; display: flex; gap: 10px;">
-    <%= button_to "Позначити як перевірену", teacher_lab_work_path(@lab_work, status: "reviewed"), method: :patch, style: "padding: 10px 20px; background: green; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;" %>
-  </div>
+
+  <%= form_with model: [:teacher, @lab_work], method: :patch, style: "background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 5px;" do |f| %>
+    <h3 style="margin-top: 0; font-size: 18px;">Оцінка та відгук викладача</h3>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :grade, "Оцінка (наприклад, від 1 до 100 або 5):", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+      <%= f.number_field :grade, style: "width: 150px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" %>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :feedback, "Коментар / Побажання до доопрацювання:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+      <%= f.text_area :feedback, rows: 4, style: "width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;", placeholder: "Введіть коментар для студента..." %>
+    </div>
+
+    <%= hidden_field_tag :status, "reviewed" %>
+
+    <div>
+      <%= f.submit "Зберегти оцінку та позначити як перевірену", style: "padding: 10px 20px; background: green; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;" %>
+    </div>
+  <% end %>
 </div>

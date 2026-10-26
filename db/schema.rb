@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_26_131622) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_26_171411) do
   create_table "answers", force: :cascade do |t|
     t.integer "lab_work_id", null: false
     t.integer "question_id", null: false
@@ -39,6 +39,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_131622) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "grade"
+    t.text "feedback"
+    t.json "answers"
     t.index ["lab_work_template_id"], name: "index_lab_works_on_lab_work_template_id"
     t.index ["student_id"], name: "index_lab_works_on_student_id"
   end

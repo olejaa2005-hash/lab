@@ -13,6 +13,7 @@ module Teacher
                          .where(lab_work_templates: { teacher_id: current_user.id })
                          .find(params[:id])
       @template = @lab_work.lab_work_template
+      @student = @lab_work.student
     end
 
     def new
@@ -63,10 +64,14 @@ module Teacher
                          .where(lab_work_templates: { teacher_id: current_user.id })
                          .find(params[:id])
 
-      if @lab_work.update(status: params[:status])
-        redirect_to teacher_lab_works_path, notice: "Статус роботи оновлено!"
+      update_params = lab_work_params.to_h
+      update_params[:status] = params[:status] if params[:status].present?
+
+      if @lab_work.update(update_params)
+        redirect_to teacher_lab_works_path, notice: "Роботу успішно перевірено та оновлено!"
       else
-        redirect_to teacher_lab_work_path(@lab_work), alert: "Помилка оновлення статусу."
+        @template = @lab_work.lab_work_template
+        render :show, status: :unprocessable_entity
       end
     end
 
@@ -79,7 +84,7 @@ module Teacher
     end
 
     def lab_work_params
-      params.require(:lab_work).permit(:lab_work_template_id, :student_id)
+      params.require(:lab_work).permit(:lab_work_template_id, :student_id, :grade, :feedback, answers: {})
     end
   end
 end
