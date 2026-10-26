@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
   root "sessions#new"
 
   get "/login", to: "sessions#new"

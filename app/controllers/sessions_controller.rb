@@ -1,27 +1,21 @@
 class SessionsController < ApplicationController
+  allow_unauthenticated_access only: %i[ new create ]
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_path, alert: "Try again later." }
+
   def new
   end
 
   def create
-    user = User.find_by(email_address: params[:email_address])
-
-    if user && user.authenticate(params[:password])
-      session[:user_id] = user.id
-
-
-      if user.role == "teacher"
-        redirect_to teacher_lab_work_templates_path, notice: "Успішний вхід викладача!"
-      else
-        redirect_to student_lab_works_path, notice: "Успішний вхід студента!"
-      end
+    if user = User.authenticate_by(params.permit(:email_address, :password))
+      start_new_session_for user
+      redirect_to after_authentication_url
     else
-      flash.now[:alert] = "Невірний email або пароль"
-      render :new, status: :unprocessable_entity
+      redirect_to new_session_path, alert: "Try another email address or password."
     end
   end
 
   def destroy
-    session[:user_id] = nil
-    redirect_to login_path, notice: "Ви вийшли із системи."
+    terminate_session
+    redirect_to new_session_path, status: :see_other
   end
 end
