@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   namespace :teacher do
     resources :lab_work_templates
-    resources :lab_works, only: [:index, :show, :update]
+    resources :lab_works, only: %i[index show new create update]
   end
 
   namespace :student do

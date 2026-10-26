@@ -4,8 +4,7 @@ module Student
     before_action :ensure_student!
 
     def index
-      @templates = LabWorkTemplate.all
-      @my_lab_works = current_user.lab_works
+      @lab_works = current_user.lab_works.includes(:lab_work_template)
     end
 
     def show

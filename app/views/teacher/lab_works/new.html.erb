@@ -1,0 +1,44 @@
+<div class="max-w-xl mx-auto mt-8 bg-white p-6 rounded-lg shadow border">
+  <h1 class="text-2xl font-bold mb-6 text-gray-800">Призначити лабораторну роботу</h1>
+
+  <%= form_with model: [:teacher, @lab_work], local: true, class: "space-y-6" do |form| %>
+    <div>
+      <%= form.label :lab_work_template_id, "Оберіть шаблон лабораторної", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.collection_select :lab_work_template_id, @templates, :id, :title, { prompt: "Виберіть шаблон..." }, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2", required: true } %>
+    </div>
+
+
+    <div class="flex items-center space-x-3 bg-gray-50 p-3 rounded-md border">
+      <input type="checkbox" name="assign_to_all" value="1" id="assign_to_all_checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+      <label for="assign_to_all_checkbox" class="text-sm font-medium text-gray-900 cursor-pointer">
+        👥 Призначити всім студентам одночасно
+      </label>
+    </div>
+
+    <div id="single-student-field">
+      <%= form.label :student_id, "Оберіть конкретного студента", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.collection_select :student_id, @students, :id, :email_address, { prompt: "Виберіть студента..." }, { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2", id: "student-select" } %>
+    </div>
+
+    <div class="flex justify-end space-x-4 pt-4 border-t">
+      <%= link_to "Скасувати", teacher_lab_work_templates_path, class: "px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" %>
+      <%= form.submit "Призначити роботу", class: "px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer" %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+    document.getElementById('assign_to_all_checkbox').addEventListener('change', function() {
+        const studentField = document.getElementById('single-student-field');
+        const studentSelect = document.getElementById('student-select');
+
+        if (this.checked) {
+            studentField.style.display = 'none';
+            studentSelect.required = false;
+            studentSelect.value = '';
+        } else {
+            studentField.style.display = 'block';
+            studentSelect.required = true;
+        }
+    });
+</script>
