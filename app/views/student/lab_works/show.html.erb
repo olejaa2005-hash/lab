@@ -4,6 +4,13 @@
     <%= link_to "Назад до списку", student_lab_works_path, style: "color: blue; text-decoration: none;" %>
   </div>
 
+  <!-- Виведення повідомлення про помилку, якщо не заповнені обов'язкові поля -->
+  <% if flash[:alert].present? %>
+    <div style="padding: 12px; margin-bottom: 20px; background: #ffe6e6; color: #cc0000; border: 1px solid #cc0000; border-radius: 4px; font-weight: bold;">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+
   <p style="color: #666; margin-bottom: 20px;"><%= @template.description %></p>
 
   <h2 style="font-size: 18px; margin-bottom: 15px;">Запитання:</h2>
@@ -18,7 +25,8 @@
               <span style="color: red;">*</span>
             <% end %>
           </label>
-          <textarea name="answers[<%= question.id %>]" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Введіть вашу відповідь тут..."></textarea>
+          <!-- Зберігаємо введений текст у textarea, навіть якщо виникла помилка валідації -->
+          <textarea name="answers[<%= question.id %>]" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Введіть вашу відповідь тут..."><%= params.dig(:answers, question.id.to_s) %></textarea>
         </div>
       <% end %>
     </div>

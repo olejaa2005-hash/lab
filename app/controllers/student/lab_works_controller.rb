@@ -25,11 +25,24 @@ module Student
 
     def update
       @lab_work = current_user.lab_works.find(params[:id])
+      @template = @lab_work.lab_work_template
+
+      # Отримуємо відповіді від студента з параметрів (answers: { question_id => "відповідь" })
+      answers_params = params[:answers] || {}
+
+      # Перевіряємо, чи заповнені всі обов'язкові питання (required? == true)
+      missing_required = @template.questions.any? do |question|
+        question.required? && answers_params[question.id.to_s].blank?
+      end
+
+      if missing_required
+        flash.now[:alert] = "Будь ласка, заповніть усі обов'язкові поля перед здачею роботи!"
+        render :show, status: :unprocessable_entity and return
+      end
 
       if @lab_work.update(status: "completed")
         redirect_to student_lab_works_path, notice: "Лабораторну роботу успішно здано!"
       else
-        @template = @lab_work.lab_work_template
         render :show, status: :unprocessable_entity
       end
     end
